@@ -5,11 +5,14 @@ from uuid import UUID
 from app.uow import UnitOfWorkInterface
 from app.message_broker.notification_broker import MessageBrokerInterface
 from app.schemas import NotificationCreate
+from app.validators.notification_validator import (
+    NotificationValidationError,
+    validate
+)
 
 
 
-class NotificationValidationError(Exception):
-    pass
+
 
 
 class NotificationNotFoundError(Exception):
@@ -50,11 +53,10 @@ class NotificationService(NotificationServiceInterface):
     async def create_notification(self, notification_data: NotificationCreate) -> dict[str, Any]:
         "План: Сначала валидация данных, "
 
-
-        data_valid = await self._data_validation(notification_data)
-
-        if not data_valid:
-            raise NotificationValidationError("Invalid notification data")
+        try:
+            await self.valid(notification_data)
+        except NotificationValidationError as e:
+            raise NotificationValidationError(str(e))
 
         async with self._uow_factory() as uow:
 
@@ -82,8 +84,5 @@ class NotificationService(NotificationServiceInterface):
             items = await uow.repository.list(status=status, limit=limit, offset=offset)
         return [item.model_dump(mode="json") for item in items]
 
-
-    async def _data_validation(self, notification_data):
-        pass
 
 

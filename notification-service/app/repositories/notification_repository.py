@@ -70,17 +70,16 @@ class NotificationRepository(NotificationRepositoryInterface):
 
     async def list(
         self,
-        status: str | None = None,
+        status: str,
         limit: int = 50,
         offset: int = 0,
     ) -> list[NotificationResponse]:
         stmt = select(Notification)
-        if status is not None:
-            stmt = stmt.where(Notification.status == status)
+        stmt = stmt.where(Notification.status == status)
         stmt = (
             stmt.order_by(Notification.created_at.desc())
             .limit(limit)
             .offset(offset)
         )
         result = await self._session.execute(stmt)
-        return [NotificationResponse.model_validate(o) for o in result.scalars().all()]
+        return [NotificationResponse.model_validate(obj) for obj in result.scalars().all()]
