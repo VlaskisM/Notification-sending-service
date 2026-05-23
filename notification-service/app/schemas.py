@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class NotificationCreate(BaseModel):
@@ -16,4 +16,4 @@ class NotificationResponse(BaseModel):
 
     id: UUID
     status: str
-    error: str | None = None
+    error: str | None = Field(default=None, validation_alias="error_text")
