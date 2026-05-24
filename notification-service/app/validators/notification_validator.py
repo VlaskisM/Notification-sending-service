@@ -20,6 +20,8 @@ async def validate(data: NotificationCreate) -> None:
         raise NotificationValidationError("message is required")
     if data.type == "email" and "@" not in data.recipient:
         raise NotificationValidationError("email recipient must contain '@'")
-    if data.type == "sms" and not data.recipient.startswith("+"):
-        raise NotificationValidationError("sms recipient must start with '+' (E.164)")
+    if data.type == "telegram" and not data.recipient[0] == "@":
+        raise NotificationValidationError("telegram recipient must start with '@'")
+    if data.type == "sms" and not data.recipient[0] == "+":
+        raise NotificationValidationError("sms recipient must start with '+'")
 

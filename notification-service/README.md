@@ -13,7 +13,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-После того как контейнеры поднялись, накатить миграции:
+После того как контейнеры поднялись, нужно накатить миграции:
 
 ```bash
 docker compose run --rm app alembic upgrade head
@@ -21,7 +21,7 @@ docker compose run --rm app alembic upgrade head
 
 Дальше API доступен на `http://localhost:5001`.
 
-Порт 5001 — потому что на macOS на 5000 висит AirPlay Receiver. Если у тебя его нет, можно поменять проброс в `docker-compose.yml` обратно на `5000:5000`.
+Порт 5001 — потому что на macOS на 5000 висит AirPlay Receiver. Если у вас его нет, можно поменять проброс в `docker-compose.yml` обратно на `5000:5000`.
 
 ### Переменные окружения
 
