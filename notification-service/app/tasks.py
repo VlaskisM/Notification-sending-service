@@ -19,15 +19,13 @@ log = logging.getLogger(__name__)
 )
 def send_notification(self, notification_id: str):
     nid = UUID(notification_id)
+    log.info("processing notification id=%s", nid)
     try:
-
-        log.info(f"sending notification {nid}")
         _update_status(nid, status="sent")
-
+        log.info("notification sent id=%s", nid)
     except Exception as e:
-        
-        log.info(f"failed to send notification {nid}")
-        _update_status(nid, status="failed", error=e)
+        log.error("notification failed id=%s error=%s", nid, e)
+        _update_status(nid, status="failed", error=str(e))
         raise self.retry(exc=e)
 
 

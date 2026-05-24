@@ -5,10 +5,7 @@ from uuid import UUID
 from app.uow import UnitOfWorkInterface
 from app.message_broker.notification_broker import MessageBrokerInterface
 from app.schemas import NotificationCreate
-from app.validators.notification_validator import (
-    NotificationValidationError,
-    validate
-)
+from app.validators.notification_validator import validate
 
 
 
@@ -53,10 +50,7 @@ class NotificationService(NotificationServiceInterface):
     async def create_notification(self, notification_data: NotificationCreate) -> dict[str, Any]:
         "План: Сначала валидация данных, "
 
-        try:
-            await self.valid(notification_data)
-        except NotificationValidationError as e:
-            raise NotificationValidationError(str(e))
+        await validate(notification_data)
 
         async with self._uow_factory() as uow:
 

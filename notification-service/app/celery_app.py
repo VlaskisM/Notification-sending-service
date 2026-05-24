@@ -1,3 +1,5 @@
+import logging
+
 from celery import Celery
 from app.config.config_celery import settings as celery_settings
 

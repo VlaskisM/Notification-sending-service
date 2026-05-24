@@ -1,7 +1,11 @@
+import logging
 from abc import ABC, abstractmethod
 
 from app.schemas import NotificationResponse
 from app.tasks import send_notification
+
+log = logging.getLogger(__name__)
+
 
 class MessageBrokerInterface(ABC):
 
@@ -13,4 +17,5 @@ class MessageBrokerInterface(ABC):
 class CeleryMessageBroker(MessageBrokerInterface):
 
     async def publish(self, notification: NotificationResponse):
+        log.info("queued notification id=%s", notification.id)
         send_notification.delay(str(notification.id))

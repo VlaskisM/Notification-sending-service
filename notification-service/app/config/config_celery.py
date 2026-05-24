@@ -13,6 +13,7 @@ class CelerySettings(BaseSettings):
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.CELERY_BROKER_DB}"
 
     model_config = SettingsConfigDict(
-        env_file=str(Path(__file__).resolve().parent.parent / ".env")
+        env_file=str(Path(__file__).resolve().parent.parent.parent / ".env"),
+        extra="ignore"
     )
 settings = CelerySettings()

@@ -1,0 +1,8 @@
+.venv
+.env
+.env.example
+requests.http
+.gitignore
+__pycache__
+.git
+.dockerignore

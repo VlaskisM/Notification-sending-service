@@ -1,0 +1,24 @@
+POST http://localhost:5001/api/v1/notifications/
+Content-Type: application/json
+
+{
+  "type": "sms",
+  "recipient": "+79384782784",
+  "subject": "Hello",
+  "message": "Test message"
+}
+
+###
+
+POST http://localhost:5001/api/v1/notifications/
+Content-Type: application/json
+
+{
+  "type": "telegram",
+  "recipient": "@max_test",
+  "message": "Hello from Telegram"
+}
+
+###
+
+GET http://localhost:5001/api/v1/notifications/063ea17d-c6d0-4b90-9fea-7e11a089f33f

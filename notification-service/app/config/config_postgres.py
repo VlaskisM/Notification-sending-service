@@ -9,8 +9,6 @@ class PostgresSettings(BaseSettings):
     POSTGRES_DB: str
     POSTGRES_HOST: str
     POSTGRES_PORT: int
-    REDIS_HOST: str
-    REDIS_PORT: int
 
     @property
     def db_url(self) -> str:
@@ -21,7 +19,8 @@ class PostgresSettings(BaseSettings):
         return f"postgresql+psycopg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
 
     model_config = SettingsConfigDict(
-        env_file=str(Path(__file__).resolve().parent.parent / ".env")
+        env_file=str(Path(__file__).resolve().parent.parent.parent / ".env"),
+        extra="ignore"
     )
     
 settings = PostgresSettings()
