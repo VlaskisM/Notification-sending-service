@@ -40,7 +40,7 @@ class FakeNotificationRepository(NotificationRepositoryInterface):
             recipient=notification_data.recipient,
             subject=notification_data.subject,
             message=notification_data.message,
-            status="pending",
+            status="queued",
             error_text=None,
         )
 
