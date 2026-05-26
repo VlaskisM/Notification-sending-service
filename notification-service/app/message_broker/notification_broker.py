@@ -17,5 +17,5 @@ class MessageBrokerInterface(ABC):
 class CeleryMessageBroker(MessageBrokerInterface):
 
     async def publish(self, notification: NotificationResponse):
-        log.info("queued notification id=%s", notification.id)
+        log.info(f"queued notification {notification.id}", )
         send_notification.delay(str(notification.id))

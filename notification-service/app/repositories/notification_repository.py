@@ -82,4 +82,5 @@ class NotificationRepository(NotificationRepositoryInterface):
             .offset(offset)
         )
         result = await self._session.execute(stmt)
+
         return [NotificationResponse.model_validate(obj) for obj in result.scalars().all()]

@@ -27,9 +27,9 @@ notification_blueprint = Blueprint(
 notification_service = NotificationService(
     uow_factory=lambda: NotificationUnitOfWork(
         session_factory=_async_session,
-        repository_factory=NotificationRepository,
+        repository_factory=NotificationRepository
     ),
-    message_broker=CeleryMessageBroker(),
+    message_broker=CeleryMessageBroker()
 )
 
 
@@ -37,6 +37,13 @@ notification_service = NotificationService(
 @notification_blueprint.get("/")
 async def list_notifications():
     status = request.args.get("status")
+    if not status:
+        return jsonify({"error": "status query parameter is required"}), 400
+    
+    ALLOWED_STATUSES = {"queued", "sent", "failed"}
+    if status not in ALLOWED_STATUSES:
+        return jsonify({"error": f"status must be one of {sorted(ALLOWED_STATUSES)}"}), 400
+    
     try:
         limit = int(request.args.get("limit", app_settings.PAGINATION_DEFAULT_LIMIT))
         offset = int(request.args.get("offset", 0))
@@ -49,6 +56,7 @@ async def list_notifications():
     results = await notification_service.list_notifications(
         status=status, limit=limit, offset=offset,
     )
+    
     return jsonify(results), 200
 
 
@@ -69,11 +77,17 @@ async def create_notification():
     if payload is None:
         log.warning("invalid JSON payload")
         return jsonify({"error": "Invalid JSON payload"}), 400
-    notification = NotificationCreate(**payload)
+    
+    try:
+        notification = NotificationCreate.model_validate(payload)
+    except Exception as e:
+        log.warning(f"validation error: {str(e)}")
+        return jsonify({"error": "Invalid notification data", "details": str(e)}), 400
+    
     try:
         created_notification = await notification_service.create_notification(notification)
-        log.info("notification created id=%s", created_notification["id"])
+        log.info(f"notification created id={created_notification['id']}")
         return jsonify(created_notification), 201
     except NotificationValidationError as e:
-        log.warning("validation error: %s", e)
+        log.warning(f"validation error: {str(e)}")
         return jsonify({"error": str(e)}), 400

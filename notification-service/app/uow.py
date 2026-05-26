@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories.notification_repository import NotificationRepositoryInterface
+from app.message_broker.notification_broker import MessageBrokerInterface
+from app.schemas import NotificationResponse, NotificationCreate
 
 
 class UnitOfWorkInterface(ABC):
@@ -32,7 +34,7 @@ class NotificationUnitOfWork(UnitOfWorkInterface):
     def __init__(
             self,
             session_factory: Callable[[], AsyncSession],
-            repository_factory: Callable[[AsyncSession], NotificationRepositoryInterface],
+            repository_factory: Callable[[AsyncSession], NotificationRepositoryInterface]
         ):
         self._session_factory = session_factory
         self._repository_factory = repository_factory
@@ -54,7 +56,6 @@ class NotificationUnitOfWork(UnitOfWorkInterface):
                     raise
         finally:
             await self._session.close()
-
 
     async def commit(self):
         await self._session.commit()

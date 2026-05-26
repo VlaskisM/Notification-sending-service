@@ -29,7 +29,7 @@ class NotificationServiceInterface(ABC):
     @abstractmethod
     async def list_notifications(
         self,
-        status: str | None,
+        status: str,
         limit: int,
         offset: int,
     ) -> list[dict[str, Any]]:
@@ -48,7 +48,6 @@ class NotificationService(NotificationServiceInterface):
 
 
     async def create_notification(self, notification_data: NotificationCreate) -> dict[str, Any]:
-        "План: Сначала валидация данных, "
 
         await validate(notification_data)
 
@@ -57,6 +56,7 @@ class NotificationService(NotificationServiceInterface):
             result_response = await uow.repository.save_to_db(notification_data)
 
         await self._message_broker.publish(result_response)
+
         return result_response.model_dump(mode="json")
 
 
@@ -70,12 +70,13 @@ class NotificationService(NotificationServiceInterface):
 
     async def list_notifications(
         self,
-        status: str | None,
+        status: str,
         limit: int,
         offset: int,
     ) -> list[dict[str, Any]]:
         async with self._uow_factory() as uow:
             items = await uow.repository.list(status=status, limit=limit, offset=offset)
+
         return [item.model_dump(mode="json") for item in items]
 
 
